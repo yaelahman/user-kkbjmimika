@@ -1,100 +1,395 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
 
-        <title>Laravel</title>
+@include('layouts.header')
+@yield('style')
 
-        <!-- Fonts -->
-        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;600&display=swap" rel="stylesheet">
-
-        <!-- Styles -->
-        <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
-            .flex-center {
-                align-items: center;
-                display: flex;
-                justify-content: center;
-            }
-
-            .position-ref {
-                position: relative;
-            }
-
-            .top-right {
-                position: absolute;
-                right: 10px;
-                top: 18px;
-            }
-
-            .content {
-                text-align: center;
-            }
-
-            .title {
-                font-size: 84px;
-            }
-
-            .links > a {
-                color: #636b6f;
-                padding: 0 25px;
-                font-size: 13px;
-                font-weight: 600;
-                letter-spacing: .1rem;
-                text-decoration: none;
-                text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="flex-center position-ref full-height">
-            @if (Route::has('login'))
-                <div class="top-right links">
-                    @auth
-                        <a href="{{ url('/home') }}">Home</a>
-                    @else
-                        <a href="{{ route('login') }}">Login</a>
-
-                        @if (Route::has('register'))
-                            <a href="{{ route('register') }}">Register</a>
-                        @endif
-                    @endauth
+<body>
+    <div class="app is-primary">
+        <div class="layout">
+            <!-- Header START -->
+            <div class="header mb-5">
+                <div class="logo logo-dark border-0">
+                    <a href="index.html">
+                        <img src="{{ url('') }}/assets/images/logo/logo.png" alt="Logo">
+                        <img class="logo-fold" src="{{ url('') }}/assets/images/logo/logo-fold.png" alt="Logo">
+                    </a>
                 </div>
-            @endif
+                <div class="logo logo-white border-0">
+                    <a href="index.html">
+                        <img src="{{ url('') }}/assets/images/logo/logo-white.png" alt="Logo">
+                        <img class="logo-fold" src="{{ url('') }}/assets/images/logo/logo-fold-white.png"
+                            alt="Logo">
+                    </a>
+                </div>
+                <div class="nav-wrap">
+                    <ul class="nav-left">
+                        {{-- <li class="desktop-toggle">
+                            <a href="javascript:void(0);">
+                                <i class="anticon"></i>
+                            </a>
+                        </li> --}}
+                        <li class="mobile-toggle">
+                            <a href="javascript:void(0);">
+                                <i class="anticon"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0);" data-toggle="modal" data-target="#search-drawer">
+                                <i class="anticon anticon-search"></i>
+                            </a>
+                        </li>
+                    </ul>
 
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
                 </div>
 
-                <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://vapor.laravel.com">Vapor</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+
+            </div>
+            <!-- Side Nav END -->
+
+            <!-- Page Container START -->
+            <div class="container my-5 py-5">
+
+
+                <!-- Content Wrapper START -->
+                <div class="main-content">
+
+                    @if (Session::has('message'))
+                        <div class="alert alert-{{ Session::get('alert') }}">
+                            {{ Session::get('message') }}
+                        </div>
+                    @endif
+                    <div class="row mx-3 mb-2">
+                        <button class="btn btn-primary w-100 button_registrasi" data-status="false">REGISTRASI USER
+                            ANDA</button>
+                        <div class="card mt-3 mx-3 w-100 form_registrasi_user d-none">
+                            <div class="card-header">
+                                <h2 class="mt-2">FORMULIR</h2>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('landing.registrasiUser') }}" method="POST" class="mt-3">
+                                    @csrf
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            <label>Nama</label>
+                                            <input type="text" name="nama"
+                                                class="form-control @error('nama') is-invalid @enderror" id="nama"
+                                                placeholder="Nama" required>
+                                            @error('nama')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            <label for="no_hp">No HP</label>
+                                            <input type="number" name="no_hp"
+                                                class="form-control @error('no_hp') is-invalid @enderror" id="no_hp"
+                                                placeholder="08xxxx" required>
+                                            @error('no_hp')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="no_hp">Jenis Pekerjaan</label>
+                                        <input type="text" name="jenis_pekerjaan"
+                                            class="form-control @error('jenis_pekerjaan') is-invalid @enderror"
+                                            id="no_hp" placeholder="IT Consultant" required>
+                                        @error('jenis_pekerjaan')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="inputAddress">Alamat</label>
+                                        <textarea name="alamat"
+                                            class="form-control @error('alamat') is-invalid @enderror" required
+                                            id="alamat" cols="30" rows="10" placeholder="Jln. xxxx"></textarea>
+                                        @error('alamat')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="inputAddress">Upload Foto</label>
+                                        <div class="custom-file">
+                                            <input type="file"
+                                                class="custom-file-input @error('foto') is-invalid @enderror"
+                                                id="customFile" name="foto" required>
+                                            @error('foto')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                            <label class="custom-file-label" for="customFile">Pilih Foto</label>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Daftar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mx-3 mb-2">
+                        <button class="btn btn-primary w-100 button_aktivasi" data-status="false">AKTIVASI USER
+                            ANDA</button>
+                        <div class="card mt-3 mx-3 w-100 form_aktivasi_user d-none">
+                            <div class="card-header">
+                                <h2 class="mt-2">FORMULIR</h2>
+                            </div>
+                            <div class="card-body">
+                                <form action="{{ route('landing.aktivasiUser') }}" method="POST" class="mt-3">
+                                    @csrf
+
+                                    <div class="form-group">
+                                        <label for="no_hp">Verifikasi Kode</label>
+                                        <input type="text" name="verifikasi_kode"
+                                            class="form-control @error('verifikasi_kode') is-invalid @enderror"
+                                            id="no_hp" placeholder="xxxxx" required>
+                                        @error('verifikasi_kode')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Aktivasi</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Content Wrapper END -->
+
+            </div>
+            <!-- Page Container END -->
+
+            <!-- Footer START -->
+            <footer class="footer " style="background: #3f87f5;">
+                <div class="footer-content">
+                    <div class="container">
+                        <p class="text-white m-b-0">Copyright © 2019 Theme_Nate. All rights reserved.</p>
+                        <span>
+                            <a href="" class="text-white m-r-15">Term &amp; Conditions</a>
+                            <a href="" class="text-white">Privacy &amp; Policy</a>
+                        </span>
+                    </div>
+                </div>
+            </footer>
+            <!-- Footer END -->
+            <!-- Search Start-->
+            <div class="modal modal-left fade search" id="search-drawer">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header justify-content-between align-items-center">
+                            <h5 class="modal-title">Search</h5>
+                            <button type="button" class="close" data-dismiss="modal">
+                                <i class="anticon anticon-close"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body scrollable">
+                            <div class="input-affix">
+                                <i class="prefix-icon anticon anticon-search"></i>
+                                <input type="text" class="form-control" placeholder="Search">
+                            </div>
+                            <div class="m-t-30">
+                                <h5 class="m-b-20">Files</h5>
+                                <div class="d-flex m-b-30">
+                                    <div class="avatar avatar-cyan avatar-icon">
+                                        <i class="anticon anticon-file-excel"></i>
+                                    </div>
+                                    <div class="m-l-15">
+                                        <a href="javascript:void(0);"
+                                            class="text-dark m-b-0 font-weight-semibold">Quater
+                                            Report.exl</a>
+                                        <p class="m-b-0 text-muted font-size-13">by Finance</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex m-b-30">
+                                    <div class="avatar avatar-blue avatar-icon">
+                                        <i class="anticon anticon-file-word"></i>
+                                    </div>
+                                    <div class="m-l-15">
+                                        <a href="javascript:void(0);"
+                                            class="text-dark m-b-0 font-weight-semibold">Documentaion.docx</a>
+                                        <p class="m-b-0 text-muted font-size-13">by Developers</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex m-b-30">
+                                    <div class="avatar avatar-purple avatar-icon">
+                                        <i class="anticon anticon-file-text"></i>
+                                    </div>
+                                    <div class="m-l-15">
+                                        <a href="javascript:void(0);"
+                                            class="text-dark m-b-0 font-weight-semibold">Recipe.txt</a>
+                                        <p class="m-b-0 text-muted font-size-13">by The Chef</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex m-b-30">
+                                    <div class="avatar avatar-red avatar-icon">
+                                        <i class="anticon anticon-file-pdf"></i>
+                                    </div>
+                                    <div class="m-l-15">
+                                        <a href="javascript:void(0);"
+                                            class="text-dark m-b-0 font-weight-semibold">Project
+                                            Requirement.pdf</a>
+                                        <p class="m-b-0 text-muted font-size-13">by Project Manager</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="m-t-30">
+                                <h5 class="m-b-20">Members</h5>
+                                <div class="d-flex m-b-30">
+                                    <div class="avatar avatar-image">
+                                        <img src="{{ url('') }}/assets/images/avatars/thumb-1.jpg" alt="">
+                                    </div>
+                                    <div class="m-l-15">
+                                        <a href="javascript:void(0);" class="text-dark m-b-0 font-weight-semibold">Erin
+                                            Gonzales</a>
+                                        <p class="m-b-0 text-muted font-size-13">UI/UX Designer</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex m-b-30">
+                                    <div class="avatar avatar-image">
+                                        <img src="{{ url('') }}/assets/images/avatars/thumb-2.jpg" alt="">
+                                    </div>
+                                    <div class="m-l-15">
+                                        <a href="javascript:void(0);"
+                                            class="text-dark m-b-0 font-weight-semibold">Darryl
+                                            Day</a>
+                                        <p class="m-b-0 text-muted font-size-13">Software Engineer</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex m-b-30">
+                                    <div class="avatar avatar-image">
+                                        <img src="{{ url('') }}/assets/images/avatars/thumb-3.jpg" alt="">
+                                    </div>
+                                    <div class="m-l-15">
+                                        <a href="javascript:void(0);"
+                                            class="text-dark m-b-0 font-weight-semibold">Marshall
+                                            Nichols</a>
+                                        <p class="m-b-0 text-muted font-size-13">Data Analyst</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="m-t-30">
+                                <h5 class="m-b-20">News</h5>
+                                <div class="d-flex m-b-30">
+                                    <div class="avatar avatar-image">
+                                        <img src="{{ url('') }}/assets/images/others/img-1.jpg" alt="">
+                                    </div>
+                                    <div class="m-l-15">
+                                        <a href="javascript:void(0);" class="text-dark m-b-0 font-weight-semibold">5
+                                            Best Handwriting Fonts</a>
+                                        <p class="m-b-0 text-muted font-size-13">
+                                            <i class="anticon anticon-clock-circle"></i>
+                                            <span class="m-l-5">25 Nov 2018</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            <!-- Search End-->
+
+            <!-- Quick View START -->
+            <div class="modal modal-right fade quick-view" id="quick-view">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header justify-content-between align-items-center">
+                            <h5 class="modal-title">Theme Config</h5>
+                        </div>
+                        <div class="modal-body scrollable">
+                            <div class="m-b-30">
+                                <h5 class="m-b-0">Header Color</h5>
+                                <p>Config header background color</p>
+                                <div class="theme-configurator d-flex m-t-10">
+                                    <div class="radio">
+                                        <input id="header-default" name="header-theme" type="radio" checked
+                                            value="default">
+                                        <label for="header-default"></label>
+                                    </div>
+                                    <div class="radio">
+                                        <input id="header-primary" name="header-theme" type="radio" value="primary">
+                                        <label for="header-primary"></label>
+                                    </div>
+                                    <div class="radio">
+                                        <input id="header-success" name="header-theme" type="radio" value="success">
+                                        <label for="header-success"></label>
+                                    </div>
+                                    <div class="radio">
+                                        <input id="header-secondary" name="header-theme" type="radio" value="secondary">
+                                        <label for="header-secondary"></label>
+                                    </div>
+                                    <div class="radio">
+                                        <input id="header-danger" name="header-theme" type="radio" value="danger">
+                                        <label for="header-danger"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                            <div>
+                                <h5 class="m-b-0">Side Nav Dark</h5>
+                                <p>Change Side Nav to dark</p>
+                                <div class="switch d-inline">
+                                    <input type="checkbox" name="side-nav-theme-toogle" id="side-nav-theme-toogle">
+                                    <label for="side-nav-theme-toogle"></label>
+                                </div>
+                            </div>
+                            <hr>
+                            <div>
+                                <h5 class="m-b-0">Folded Menu</h5>
+                                <p>Toggle Folded Menu</p>
+                                <div class="switch d-inline">
+                                    <input type="checkbox" name="side-nav-fold-toogle" id="side-nav-fold-toogle">
+                                    <label for="side-nav-fold-toogle"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Quick View END -->
         </div>
-    </body>
+    </div>
+
+
+    @include('layouts.footer')
+    <script type="text/javascript">
+        $('.button_registrasi').on('click', function() {
+            $('.form_aktivasi_user').addClass('d-none')
+            $('.form_aktivasi_user').attr('data-status', 'false')
+
+            if ($(this).attr('data-status') === 'false') {
+                $('.form_registrasi_user').removeClass('d-none')
+                $(this).attr('data-status', 'true')
+            } else {
+                $('.form_registrasi_user').addClass('d-none')
+                $(this).attr('data-status', 'false')
+            }
+        })
+        $('.button_aktivasi').on('click', function() {
+            $('.form_registrasi_user').addClass('d-none')
+            $('.form_registrasi_user').attr('data-status', 'false')
+
+            if ($(this).attr('data-status') === 'false') {
+                $('.form_aktivasi_user').removeClass('d-none')
+                $(this).attr('data-status', 'true')
+            } else {
+                $('.form_aktivasi_user').addClass('d-none')
+                $(this).attr('data-status', 'false')
+            }
+        })
+
+    </script>
+
+</body>
+
 </html>
