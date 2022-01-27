@@ -17,4 +17,29 @@
 <script type="text/javascript">
     $('#data-table').DataTable();
 
+    var loadFile = function(event) {
+        var output = document.getElementById('output');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function() {
+            URL.revokeObjectURL(output.src) // free memory
+        }
+    };
+    $('#no_hp').on('keyup', function() {
+        var no_hp = $(this).val();
+        if (no_hp.length >= 2) {
+            if (no_hp.substr(0, 3) == '620') {
+                var phone = no_hp.replace('0', '');
+                $('#no_hp').val(phone);
+                console.log(no_hp);
+            } else if (no_hp.substr(0, 2) == '62') {
+                $('#no_hp').val(no_hp);
+                console.log(no_hp);
+            } else {
+                var phone = "62" + no_hp.replace('0', '');
+                $('#no_hp').val(phone);
+                console.log(no_hp);
+            }
+        }
+    })
+
 </script>

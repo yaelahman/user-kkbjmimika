@@ -106,6 +106,17 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
+                                        <label for="no_hp">Asal Paguyuban/Cabang/Komunitas</label>
+                                        <input type="text" name="asal"
+                                            class="form-control @error('asal') is-invalid @enderror" id="no_hp"
+                                            placeholder="IT Consultant" required>
+                                        @error('asal')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
                                         <label for="inputAddress">Alamat</label>
                                         <textarea name="alamat"
                                             class="form-control @error('alamat') is-invalid @enderror" required
@@ -119,16 +130,26 @@
 
                                     <div class="form-group">
                                         <label for="inputAddress">Upload Foto</label>
-                                        <div class="custom-file">
-                                            <input type="file"
-                                                class="custom-file-input @error('foto') is-invalid @enderror"
-                                                id="customFile" name="foto" required>
-                                            @error('foto')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                            <label class="custom-file-label" for="customFile">Pilih Foto</label>
+                                        <div class="row">
+                                            <div class="col-sm">
+                                                <div class="custom-file mb-2">
+                                                    <input type="file"
+                                                        class="custom-file-input @error('foto') is-invalid @enderror"
+                                                        id="customFile" name="foto" accept="image/*"
+                                                        onchange="loadFile(event)" required>
+                                                    @error('foto')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+
+                                                    <label class="custom-file-label" for="customFile">Pilih Foto</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm">
+
+                                                <img src="" id="output" class="img-thumbnail rounded" alt="">
+                                            </div>
                                         </div>
                                     </div>
                                     <button type="submit" class="btn btn-primary">Daftar</button>
@@ -387,6 +408,14 @@
 
     @include('layouts.footer')
     <script type="text/javascript">
+        var loadFile = function(event) {
+            var output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function() {
+                URL.revokeObjectURL(output.src) // free memory
+            }
+        };
+
         $('.button_registrasi').on('click', function() {
             $('.form_aktivasi_user').addClass('d-none')
             $('.form_aktivasi_user').attr('data-status', 'false')
@@ -427,6 +456,24 @@
             } else {
                 $('.form_cari_user').addClass('d-none')
                 $(this).attr('data-status', 'false')
+            }
+        })
+
+        $('#no_hp').on('keyup', function() {
+            var no_hp = $(this).val();
+            if (no_hp.length >= 2) {
+                if (no_hp.substr(0, 3) == '620') {
+                    var phone = no_hp.replace('0', '');
+                    $('#no_hp').val(phone);
+                    console.log(no_hp);
+                } else if (no_hp.substr(0, 2) == '62') {
+                    $('#no_hp').val(no_hp);
+                    console.log(no_hp);
+                } else {
+                    var phone = "62" + no_hp.replace('0', '');
+                    $('#no_hp').val(phone);
+                    console.log(no_hp);
+                }
             }
         })
 
@@ -475,6 +522,7 @@
                                         </div>
                                         <div class="text-center text-sm-left m-v-15 p-l-30">
                                             <h2 class="m-b-5">${user.nama}</h2>
+                                            <p class="text-opacity font-size-13">${user.asal}</p>
                                             <p class="text-dark m-b-20">${user.jenis_pekerjaan}</p>
                                         </div>
                                     </div>

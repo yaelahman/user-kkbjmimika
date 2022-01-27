@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\RegistrasiUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Log;
 
 class LandingPageController extends Controller
 {
@@ -14,6 +16,20 @@ class LandingPageController extends Controller
     public function index()
     {
         return view('welcome');
+    }
+
+    public function sendMessage($phone, $message)
+    {
+        $wa = Http::withHeaders([
+            'API-Key' => env('API_KEY_SENDTALK'),
+        ])->post('https://sendtalk-api.taptalk.io/api/v1/message/send_whatsapp', [
+            'phone' => $phone,
+            'messageType' => 'text',
+            'body' => $message
+        ]);
+        // dd($wa->json());
+
+        Log::info($wa);
     }
 
     public function registrasiUser(Request $request)
@@ -41,6 +57,7 @@ class LandingPageController extends Controller
             $reg->no_user = '';
             $reg->no_hp = $request->no_hp;
             $reg->jenis_pekerjaan = $request->jenis_pekerjaan;
+            $reg->asal = $request->asal;
             $reg->alamat = $request->alamat;
             $reg->verifikasi_kode = Str::random(7);
             $reg->is_active = 0;
@@ -53,6 +70,8 @@ class LandingPageController extends Controller
             $reg->foto = $nama_file;
 
             $reg->save();
+
+            $this->sendMessage($reg->no_hp, "Hai " . $reg->nama . ", Silahkan aktivasi akun anda pada User KKJBMimika. Kode Aktivasi anda adalah : " . $reg->verifikasi_kode);
 
             DB::commit();
 

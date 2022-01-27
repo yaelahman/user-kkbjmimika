@@ -6,11 +6,24 @@ use App\RegistrasiUser;
 use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Log;
 
 class UserController extends Controller
 {
+
+    public function sendMessage($phone, $message)
+    {
+        $wa = Http::withHeaders([
+            'API-Key' => env('API_KEY_SENDTALK'),
+        ])->post('https://sendtalk-api.taptalk.io/api/v1/message/send_whatsapp', [
+            'phone' => $phone,
+            'messageType' => 'text',
+            'body' => $message
+        ]);
+    }
     public function index()
     {
         $user = RegistrasiUser::orderBy('id', 'desc')->get();
@@ -53,6 +66,7 @@ class UserController extends Controller
             $reg->no_user = '';
             $reg->no_hp = $request->no_hp;
             $reg->jenis_pekerjaan = $request->jenis_pekerjaan;
+            $reg->asal = $request->asal;
             $reg->alamat = $request->alamat;
             $reg->verifikasi_kode = Str::random(7);
             $reg->is_active = 1;
@@ -108,25 +122,29 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             $reg = RegistrasiUser::find($id);
-            File::delete('foto/' . $reg->foto);
 
             $reg->nama = $request->nama;
             $reg->no_hp = $request->no_hp;
             $reg->jenis_pekerjaan = $request->jenis_pekerjaan;
+            $reg->asal = $request->asal;
             $reg->alamat = $request->alamat;
-            $file = $request->file('foto');
+            if ($request->hasFile('foto')) {
 
-            $nama_file = time() . "_" . $file->getClientOriginalName();
-            $tujuan_upload = 'foto';
-            $file->move($tujuan_upload, $nama_file);
-            $reg->foto = $nama_file;
+                File::delete('foto/' . $reg->foto);
+                $file = $request->file('foto');
+
+                $nama_file = time() . "_" . $file->getClientOriginalName();
+                $tujuan_upload = 'foto';
+                $file->move($tujuan_upload, $nama_file);
+                $reg->foto = $nama_file;
+            }
 
             $reg->save();
 
             DB::commit();
 
             $request->session()->flash('alert', 'success');
-            return redirect(route('admin.user.index'))->with('message', "Registrasi Berhasil Dilakukan, Silahkan Aktivasi Akun !");
+            return redirect(route('admin.user.index'))->with('message', "User Berhasil Diubah !");
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
@@ -143,10 +161,16 @@ class UserController extends Controller
                 $request->session()->flash('alert', 'danger');
                 return redirect(route('admin.user.index'))->with('message', "Akun Tidak Ditemukan !");
             }
-
-            $reg->no_user = "AKJ" . rand(0, 999999);
+            $kode = "AKJ" . rand(0, 999999);
+            $reg->no_user = $kode;
+            // return ([
+            //     'no' => $reg->no_user,
+            //     'mss' => "Hai " . $reg->nama . ", Selamat akun anda telah teraktivasi. No User anda adalah : " . $kode
+            // ]);
             $reg->is_active = 2;
             $reg->save();
+
+            $this->sendMessage($reg->no_hp, "Hai " . $reg->nama . ", Selamat akun anda telah teraktivasi. No User anda adalah : " . $kode);
 
             DB::commit();
 

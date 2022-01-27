@@ -21,6 +21,7 @@
                             <th>Nama</th>
                             <th>No HP</th>
                             <th>Jenis Pekerjaan</th>
+                            <th>Asal</th>
                             <th>Alamat</th>
                             <th>Status</th>
                             <th>Aksi</th>
@@ -34,6 +35,7 @@
                                 <td>{{ $row->nama }}</td>
                                 <td>{{ $row->no_hp }}</td>
                                 <td>{{ $row->jenis_pekerjaan }}</td>
+                                <td>{{ $row->asal }}</td>
                                 <td>{{ $row->alamat }}</td>
                                 <td>
                                     @if ($row->is_active == 0)
