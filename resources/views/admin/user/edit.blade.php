@@ -11,7 +11,8 @@
             <h4 class="mt-2">Data User</h4>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.user.update', ['id' => $user->id]) }}" method="POST" class="mt-3">
+            <form action="{{ route('admin.user.update', ['id' => $user->id]) }}" method="POST" class="mt-3"
+                enctype="multipart/form-data">
                 @csrf
                 <div class="form-row">
                     <div class="form-group col-md-6">
