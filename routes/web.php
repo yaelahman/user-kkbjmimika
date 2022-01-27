@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'LandingPageController@index')->name('landing');
 Route::post('/registrasiUser', 'LandingPageController@registrasiUser')->name('landing.registrasiUser');
 Route::post('/aktivasiUser', 'LandingPageController@aktivasiUser')->name('landing.aktivasiUser');
+Route::post('/cariUser', 'LandingPageController@cariUser')->name('landing.cariUser');
 
 Auth::routes();
 

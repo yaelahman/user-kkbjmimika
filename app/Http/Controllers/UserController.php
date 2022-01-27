@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\RegistrasiUser;
+use File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -53,9 +54,16 @@ class UserController extends Controller
             $reg->no_hp = $request->no_hp;
             $reg->jenis_pekerjaan = $request->jenis_pekerjaan;
             $reg->alamat = $request->alamat;
-            $reg->foto = $request->foto;
             $reg->verifikasi_kode = Str::random(7);
             $reg->is_active = 1;
+
+            $file = $request->file('foto');
+
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            $tujuan_upload = 'foto';
+            $file->move($tujuan_upload, $nama_file);
+            $reg->foto = $nama_file;
+
             $reg->save();
 
             DB::commit();
@@ -100,11 +108,19 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             $reg = RegistrasiUser::find($id);
+            File::delete('foto/' . $reg->foto);
+
             $reg->nama = $request->nama;
             $reg->no_hp = $request->no_hp;
             $reg->jenis_pekerjaan = $request->jenis_pekerjaan;
             $reg->alamat = $request->alamat;
-            $reg->foto = $request->foto;
+            $file = $request->file('foto');
+
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            $tujuan_upload = 'foto';
+            $file->move($tujuan_upload, $nama_file);
+            $reg->foto = $nama_file;
+
             $reg->save();
 
             DB::commit();
@@ -152,6 +168,7 @@ class UserController extends Controller
                 $request->session()->flash('alert', 'danger');
                 return redirect(route('admin.user.index'))->with('message', "Akun Tidak Ditemukan !");
             }
+            File::delete('foto/' . $reg->foto);
             $reg->delete();
 
             DB::commit();

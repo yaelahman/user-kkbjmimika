@@ -42,9 +42,16 @@ class LandingPageController extends Controller
             $reg->no_hp = $request->no_hp;
             $reg->jenis_pekerjaan = $request->jenis_pekerjaan;
             $reg->alamat = $request->alamat;
-            $reg->foto = $request->foto;
             $reg->verifikasi_kode = Str::random(7);
             $reg->is_active = 0;
+
+            $file = $request->file('foto');
+
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            $tujuan_upload = 'foto';
+            $file->move($tujuan_upload, $nama_file);
+            $reg->foto = $nama_file;
+
             $reg->save();
 
             DB::commit();
@@ -79,6 +86,29 @@ class LandingPageController extends Controller
 
             $request->session()->flash('alert', 'success');
             return redirect(route('landing'))->with('message', "Aktivasi Berhasil Dilakukan, Harap Tunggu Untuk Penyetujuan, Cek Secara Berkala !");
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function cariUser(Request $request)
+    {
+
+        try {
+            $user = RegistrasiUser::where('no_user', $request->no_user)->where('is_active', 2)->first();
+            if ($user == null) {
+                return response()->json([
+                    'message' => 'Data Tidak Ditemukan !',
+                    'status'  => 404,
+                ]);
+            }
+            $data = [
+                'user' => $user,
+                'status' => 200
+            ];
+
+            return response()->json($data);
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
