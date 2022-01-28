@@ -201,14 +201,15 @@
                                 </div>
 
                                 <button type="submit" class="btn btn-primary cari">Cari</button>
-                                <div id="result_cari">
-
-
+                                <div id="result_cari" class="mb-3">
                                 </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
+
+
                 <!-- Content Wrapper END -->
 
             </div>
@@ -416,6 +417,26 @@
             }
         };
 
+        function cetak() {
+            $('#id-card').removeClass('d-none');
+            var idCardHeight = $('#id-card').innerHeight();
+            var idCardWidth = $('#id-card').innerWidth();
+
+            const findEl = document.getElementById('id-card')
+
+            html2canvas(findEl, {
+                width: idCardWidth,
+                height: idCardHeight
+            }).then(async (canvas) => {
+                $('#id-card').addClass('d-none');
+                var link = document.createElement('a');
+                link.download = $('#no_user').val() + "_IDCARD";
+                link.href = canvas.toDataURL();
+                link.click();
+                link.remove();
+            })
+        }
+
         $('.button_registrasi').on('click', function() {
             $('.form_aktivasi_user').addClass('d-none')
             $('.form_aktivasi_user').attr('data-status', 'false')
@@ -505,11 +526,15 @@
                     no_user: no_user,
                 }
             }).then((resp) => {
+                var assets = "{{ asset('/assets/images/user1.png') }}"
                 if (resp.status == 200) {
                     var user = resp.user
                     $('#result_cari').html(
                         `
-                    <div class="card mt-3">
+                    <div class="card mt-3 mb-3">
+                        <div class="card-header">
+                            <button class="btn btn-success btn-sm my-3 button_cetak" onclick="cetak();">Cetak ID CARD</button>
+                        </div>
                         <div class="card-body">
                             <div class="row align-items-center">
                                 <div class="col-md-7">
@@ -567,6 +592,58 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div id="id-card" class="d-none"
+                        style="width: 900px; height: 1440px; background-image: url('${assets}');">
+                        <h1 class="text-uppercase" style="padding-top: 70px; padding-left: 50px; color:white">${user.asal}</h1>
+                        <div class="text-center" style="padding-top: 100px">
+                            <img src="{{ asset('foto') }}/${user.foto}"
+                                height="400px" width="400px" alt="">
+                            <h1 class="text-uppercase" style="margin-top: 40px; color: #6c7fbe">${user.nama}</h1>
+                            <h2 class="text-uppercase" style="margin-top: 10px; color: #b9b9b9">${user.jenis_pekerjaan}</h2>
+                        </div>
+                        <div
+                            style="border-top: 7px solid #848484; width: 400px; margin-left:auto; margin-right:auto; margin-top: 50px">
+                        </div>
+                        <div class="d-flex justify-content-center"
+                            style="padding-top: 50px; color: #9fa6aa">
+                            <table style="max-width: 400px">
+                                <tr>
+                                    <th style="vertical-align: top">
+                                        <h2>No User</h2>
+                                    </th>
+                                    <td style="vertical-align: top">
+                                        <h2 class="mx-2">:</h2>
+                                    </td>
+                                    <td>
+                                        <h2>${user.no_user}</h2>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="vertical-align: top">
+                                        <h2>Telepon</h2>
+                                    </th>
+                                    <td style="vertical-align: top">
+                                        <h2 class="mx-2">:</h2>
+                                    </td>
+                                    <td>
+                                        <h2>${user.no_hp}</h2>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th style="vertical-align: top">
+                                        <h2>Alamat</h2>
+                                    </th>
+                                    <td style="vertical-align: top">
+                                        <h2 class="mx-2">:</h2>
+                                    </td>
+                                    <td>
+                                        <h2>${user.alamat}</h2>
+                                    </td>
+                                </tr>
+
+                            </table>
                         </div>
                     </div>
                     `
